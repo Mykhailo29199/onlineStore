@@ -34,8 +34,18 @@ namespace Store.Services.Services
 
         public async Task CreateGameAsync(GameModel gameModel)
         {
+            // спочатку поробити перевірки через модельки, а не ентіті, а потім помапити
+
             GameEntity gameEntity = _mapper.Map<GameEntity>(gameModel);
-            foreach(var platform in gameEntity.GamePlatforms) 
+
+            gameEntity.GameKey = GenerateGameKeyIfMissing(gameEntity.GameKey, gameEntity.Name);
+
+            if(!(await _unitOfWork.GameRepository.CheckIfKeyUniqueAsync(gameEntity.GameKey)))
+            {
+                throw new Exception();
+            }
+
+            foreach (var platform in gameEntity.GamePlatforms) 
             {
                if( await _unitOfWork.PlatformRepository.CheckIfExistAsync(platform.PlatformId))
                 {
@@ -44,25 +54,46 @@ namespace Store.Services.Services
 
             }
 
-            
+            foreach (var genre in gameEntity.GameGenres)
+            {
+                if (await _unitOfWork.GenreRepository.CheckIfExistAsync(genre.GenreId))
+                {
+                    throw new Exception();
+                }
+
+            }
+
+
+
+
             await _unitOfWork.GameRepository.AddAsync(gameEntity);
             await _unitOfWork.SaveAsync();
         }
 
-        //public void GenerateGameKeyIfMissing()
-        //{
-        //    if (string.IsNullOrWhiteSpace(GameKey) && !string.IsNullOrWhiteSpace(Name))
-        //    {
-        //        GameKey = Name
-        //            .ToLower()
-        //            .Replace(" ", "-")
-        //            .Replace(".", "")
-        //            .Replace(",", "")
-        //            .Replace(":", "")
-        //            .Replace(";", "")
-        //            .Replace("!", "")
-        //            .Replace("?", "");
-        //    }
-        //}
+        private string GenerateGameKeyIfMissing(string gameKey, string gameName)
+        {
+            if (
+                string.IsNullOrWhiteSpace(gameKey) || string.Empty == gameKey
+               )
+            {
+                if(string.IsNullOrWhiteSpace(gameName) || string.Empty == gameName)
+                {
+                    throw new Exception("No name");
+                }
+
+                gameKey = gameName
+                    .ToLower()
+                    .Replace(" ", "-")
+                    .Replace(".", "")
+                    .Replace(",", "")
+                    .Replace(":", "")
+                    .Replace(";", "")
+                    .Replace("!", "")
+                    .Replace("?", "");
+            }
+
+            return gameKey;
+
+        }
     }
 }
