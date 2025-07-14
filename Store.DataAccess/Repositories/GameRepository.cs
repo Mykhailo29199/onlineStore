@@ -12,8 +12,21 @@ namespace Store.DataAccess.Repositories
 {
     public class GameRepository : GenericRepository<GameEntity>
     {
+        private readonly DbSet<GameEntity> _dbSet;
+
         public GameRepository(StoreContext context) : base(context)
         {
+            _dbSet = context.Set<GameEntity>();
+        }
+
+        public async Task <bool> CheckIfKeyUniqueAsync (string gameKey)
+        {
+            if (await _dbSet.AnyAsync(x => x.GameKey == gameKey)) 
+            {
+                return false;
+            }
+            return true;
+
         }
 
         //public asyc Task<bool> CheckIfExistKey()
@@ -23,5 +36,5 @@ namespace Store.DataAccess.Repositories
         //    return GetByIdAsync(id) == null;
         //}
 
-}
+    }
 }

@@ -13,6 +13,7 @@ namespace Store.DataAccess.UnitOfWork
     {
         private GameRepository _gameRepository;
         private PlatformRepository _platformRepository;
+        private GenreRepository _genreRepository;
         public UnitOfWork(StoreContext context)
         {
             Context = context;
@@ -28,6 +29,11 @@ namespace Store.DataAccess.UnitOfWork
         public PlatformRepository PlatformRepository
         {
             get { return _platformRepository ??= new PlatformRepository(Context); }
+        }
+
+        public GenreRepository GenreRepository
+        {
+            get { return _genreRepository ??= new GenreRepository(Context); }
         }
 
         public async Task CreateTransactionAsync()
