@@ -5,18 +5,13 @@ using Store.DataAccess.Repositories;
 using Store.DataAccess.UnitOfWork;
 using Store.Services.Models;
 using Store.Services.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OnlineStore.Shared.ExtensionShared;
 
 namespace Store.Services.Services
 {
     public class GameService : IGameService
     {
         private readonly IUnitOfWork<StoreContext> _unitOfWork;
-        private readonly GameRepository _gameRepository;
         private IMapper _mapper;
 
         public GameService(IUnitOfWork<StoreContext> unitOfWork, IMapper mapper)
@@ -40,16 +35,16 @@ namespace Store.Services.Services
 
             gameEntity.GameKey = GenerateGameKeyIfMissing(gameEntity.GameKey, gameEntity.Name);
 
-            if(!(await _unitOfWork.GameRepository.CheckIfKeyUniqueAsync(gameEntity.GameKey)))
+            if (!(await _unitOfWork.GameRepository.CheckIfKeyUniqueAsync(gameEntity.GameKey)))
             {
-                throw new Exception();
+                throw new GameKeyNotUniqueException(gameEntity.GameKey);
             }
 
-            foreach (var platform in gameEntity.GamePlatforms) 
+            foreach (var platform in gameEntity.GamePlatforms)
             {
-               if( await _unitOfWork.PlatformRepository.CheckIfExistAsync(platform.PlatformId))
+                if (await _unitOfWork.PlatformRepository.CheckIfExistAsync(platform.PlatformId))
                 {
-                    throw new Exception(); // dorobutu
+                    throw new PlatformNotFoundException(platform.PlatformId);
                 }
 
             }
@@ -58,7 +53,7 @@ namespace Store.Services.Services
             {
                 if (await _unitOfWork.GenreRepository.CheckIfExistAsync(genre.GenreId))
                 {
-                    throw new Exception();
+                    throw new GenreNotFoundException(genre.GenreId);
                 }
 
             }
@@ -76,7 +71,7 @@ namespace Store.Services.Services
                 string.IsNullOrWhiteSpace(gameKey) || string.Empty == gameKey
                )
             {
-                if(string.IsNullOrWhiteSpace(gameName) || string.Empty == gameName)
+                if (string.IsNullOrWhiteSpace(gameName) || string.Empty == gameName)
                 {
                     throw new Exception("No name");
                 }

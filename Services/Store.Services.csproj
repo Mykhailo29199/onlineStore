@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnlineStore.Shared\OnlineStore.Shared.csproj" />
     <ProjectReference Include="..\Store.DataAccess\Store.DataAccess.csproj" />
   </ItemGroup>
 
