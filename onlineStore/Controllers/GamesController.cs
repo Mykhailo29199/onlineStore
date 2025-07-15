@@ -16,7 +16,8 @@ namespace onlineStore.Controllers
         private readonly IGameService _gameService;
         private readonly IMapper _mapper;
 
-        public GamesController(IGameService gameService, IMapper mapper) {
+        public GamesController(IGameService gameService, IMapper mapper)
+        {
             _gameService = gameService;
             _mapper = mapper;
         }
@@ -28,32 +29,25 @@ namespace onlineStore.Controllers
             {
                 return BadRequest("Invalid request body.");
             }
-
-            //// —творюЇмо сутн≥сть гри
-            //var baseGameModel = new BaseGameModel()
-            //{
-            //    Name = requestPostDTO.Game.Name,
-            //    Key = requestPostDTO.Game.Key,
-            //    Description = requestPostDTO.Game.Description
-            //};
-
-            //var gameModel = new GameModel()
-            //{
-            //    Game = baseGameModel,
-            //    Genres = requestPostDTO.Genres,
-            //    Platforms = requestPostDTO.Platforms
-            //};
             var gameModel = _mapper.Map<GameModel>(requestPostDTO);
-           await _gameService.CreateGameAsync(gameModel);
+            await _gameService.CreateGameAsync(gameModel);
 
             // якщо GameKey не передано, згенеруЇмо його
             return NoContent();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetGame([FromQuery] Guid? Id)
-        //{
+        [HttpGet("games/{key}")]
+        public async Task<IActionResult> GetGameByKey([FromRoute] string key)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest("Game key must be provided.");
+            }
 
-        //}
+
+            var gameModel = await _gameService.GetGameByKeyAsync(key);
+            var responseDTO = _mapper.Map<GameGetByKeyDTO>(gameModel);
+            return Ok(responseDTO);
+        }
     }
 }

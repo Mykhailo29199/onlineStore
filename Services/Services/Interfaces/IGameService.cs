@@ -10,5 +10,6 @@ namespace Store.Services.Services.Interfaces
     public interface IGameService
     {
         Task CreateGameAsync(GameModel gameModel);
+        Task<BaseGameModel> GetGameByKeyAsync(string gameKey);
     }
 }

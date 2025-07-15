@@ -29,12 +29,9 @@ namespace Store.DataAccess.Repositories
 
         }
 
-        //public asyc Task<bool> CheckIfExistKey()
-
-        //(Guid id)
-        //{
-        //    return GetByIdAsync(id) == null;
-        //}
-
+        public async Task<GameEntity> GetGameByKeyAsync(string gameKey)
+        {
+            return await _dbSet.FirstOrDefaultAsync(x => x.GameKey == gameKey);
+        }
     }
 }

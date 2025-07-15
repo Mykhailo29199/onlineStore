@@ -90,5 +90,20 @@ namespace Store.Services.Services
             return gameKey;
 
         }
+
+        public async Task<BaseGameModel> GetGameByKeyAsync(string gameKey)
+        {
+            // Отримуємо гру з бази
+            var gameEntity = await _unitOfWork.GameRepository.GetGameByKeyAsync(gameKey);
+
+            // Якщо не знайдено — кидаємо інший виняток
+            if (gameEntity == null)
+            {
+                throw new Exception(gameKey);
+            }
+
+            // Повертаємо мапінг в GameModel (а контролер уже мапить на DTO)
+            return _mapper.Map<BaseGameModel>(gameEntity);
+        }
     }
 }
