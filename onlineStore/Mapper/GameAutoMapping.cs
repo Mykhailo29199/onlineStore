@@ -47,7 +47,7 @@ namespace Store.WebAPI.Mapper
             CreateMap<GameCreateRequestDTO, GameModel>()
                     .ReverseMap();
 
-            CreateMap<GameGetByKeyDTO, BaseGameModel>()
+            CreateMap<GameGetDTO, BaseGameModel>()
                    .ReverseMap();
         }
 

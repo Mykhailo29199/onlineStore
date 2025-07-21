@@ -11,9 +11,10 @@ namespace Store.DataAccess.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork<StoreContext>
     {
-        private GameRepository _gameRepository;
-        private PlatformRepository _platformRepository;
-        private GenreRepository _genreRepository;
+        private GameRepository? _gameRepository;
+        private PlatformRepository? _platformRepository;
+        private GamePlatformRepository? _gamePlatformRepository;
+        private GenreRepository? _genreRepository;
         public UnitOfWork(StoreContext context)
         {
             Context = context;
@@ -29,6 +30,11 @@ namespace Store.DataAccess.UnitOfWork
         public PlatformRepository PlatformRepository
         {
             get { return _platformRepository ??= new PlatformRepository(Context); }
+        }
+
+        public GamePlatformRepository GamePlatformRepository
+        {
+            get { return _gamePlatformRepository ??= new GamePlatformRepository(Context); }
         }
 
         public GenreRepository GenreRepository

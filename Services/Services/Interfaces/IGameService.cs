@@ -11,5 +11,7 @@ namespace Store.Services.Services.Interfaces
     {
         Task CreateGameAsync(GameModel gameModel);
         Task<BaseGameModel> GetGameByKeyAsync(string gameKey);
+        Task<BaseGameModel> GetGameByIdAsync(Guid gameId);
+        Task<IList<BaseGameModel>> GetGamesByPlatformIdAsync(Guid platformId);
     }
 }

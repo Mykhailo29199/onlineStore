@@ -10,9 +10,9 @@ namespace Store.DataAccess.Repositories
 {
     public class PlatformRepository : GenericRepository<PlatformEntity>
     {
-        public PlatformRepository(StoreContext context) : base(context) 
-        { 
-            
+        public PlatformRepository(StoreContext context) : base(context)
+        {
+
         }
     }
 }

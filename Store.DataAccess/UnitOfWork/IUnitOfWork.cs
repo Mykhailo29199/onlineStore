@@ -12,6 +12,7 @@ namespace Store.DataAccess.UnitOfWork
     {
         GameRepository GameRepository { get; }
         PlatformRepository PlatformRepository { get; }
+        GamePlatformRepository GamePlatformRepository { get; }
         GenreRepository GenreRepository { get; }
         //The following Property is going to hold the context object
         StoreContext Context { get; }

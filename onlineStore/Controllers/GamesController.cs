@@ -6,6 +6,8 @@ using Store.WebAPI.DTOs;
 using Store.Services.Services.Interfaces;
 using Store.Services.Models;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace onlineStore.Controllers
 {
@@ -46,7 +48,32 @@ namespace onlineStore.Controllers
 
 
             var gameModel = await _gameService.GetGameByKeyAsync(key);
-            var responseDTO = _mapper.Map<GameGetByKeyDTO>(gameModel);
+            var responseDTO = _mapper.Map<GameGetDTO>(gameModel);
+            return Ok(responseDTO);
+        }
+
+        [HttpGet("games/find/{id}")]
+        public async Task<IActionResult> GetGameById([FromRoute] Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Game Id must be provided.");
+            }
+
+            var gameModel = await _gameService.GetGameByIdAsync(id);
+            var responseDTO = _mapper.Map<GameGetDTO>(gameModel);
+            return Ok(responseDTO);
+        }
+
+        [HttpGet("platforms/{platformId}/games")]
+        public async Task<IActionResult> GetGameByPlatformId([FromRoute] Guid platformId)
+        {
+            if (platformId == Guid.Empty)
+            {
+                return BadRequest("Platform Id must be provided.");
+            }
+            var gameModel = await _gameService.GetGamesByPlatformIdAsync(platformId);
+            var responseDTO = _mapper.Map<IList<GameGetDTO>>(gameModel);
             return Ok(responseDTO);
         }
     }

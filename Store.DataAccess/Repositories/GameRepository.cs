@@ -19,9 +19,9 @@ namespace Store.DataAccess.Repositories
             _dbSet = context.Set<GameEntity>();
         }
 
-        public async Task <bool> CheckIfKeyUniqueAsync (string gameKey)
+        public async Task<bool> CheckIfKeyUniqueAsync(string gameKey)
         {
-            if (await _dbSet.AnyAsync(x => x.GameKey == gameKey)) 
+            if (await _dbSet.AnyAsync(x => x.GameKey == gameKey))
             {
                 return false;
             }
@@ -33,5 +33,6 @@ namespace Store.DataAccess.Repositories
         {
             return await _dbSet.FirstOrDefaultAsync(x => x.GameKey == gameKey);
         }
+
     }
 }

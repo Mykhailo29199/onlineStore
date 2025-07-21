@@ -23,4 +23,28 @@
         {
         }
     }
+
+    public class GameIdNotFoundException : Exception
+    {
+        public GameIdNotFoundException(Guid gameId)
+            : base($"Game with ID '{gameId}' is not found.")
+        {
+        }
+    }
+
+    public class GameKeyNotFoundException : Exception
+    {
+        public GameKeyNotFoundException(string gameKey)
+            : base($"Game with Key '{gameKey}' is not found.")
+        {
+        }
+    }
+
+    public class GameNoNameException : Exception
+    {
+        public GameNoNameException()
+            : base("No name")
+        {
+        }
+    }
 }

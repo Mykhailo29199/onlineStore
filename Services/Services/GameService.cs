@@ -20,13 +20,6 @@ namespace Store.Services.Services
             _mapper = mapper;
         }
 
-        //public void CreateGame(GameModel gameModel)
-        //{
-        //    GameEntity gameEntity = _mapper.Map<GameEntity>(gameModel);
-        //    _unitOfWork.GameRepository.Add(gameEntity);
-        //    _unitOfWork.Save();
-        //}
-
         public async Task CreateGameAsync(GameModel gameModel)
         {
             // спочатку поробити перевірки через модельки, а не ентіті, а потім помапити
@@ -73,7 +66,7 @@ namespace Store.Services.Services
             {
                 if (string.IsNullOrWhiteSpace(gameName) || string.Empty == gameName)
                 {
-                    throw new Exception("No name");
+                    throw new GameNoNameException();
                 }
 
                 gameKey = gameName
@@ -99,11 +92,37 @@ namespace Store.Services.Services
             // Якщо не знайдено — кидаємо інший виняток
             if (gameEntity == null)
             {
-                throw new Exception(gameKey);
+                throw new GameKeyNotFoundException(gameKey);
             }
 
             // Повертаємо мапінг в GameModel (а контролер уже мапить на DTO)
             return _mapper.Map<BaseGameModel>(gameEntity);
+        }
+
+        public async Task<BaseGameModel> GetGameByIdAsync(Guid gameId)
+        {
+            var gameEntity = await _unitOfWork.GameRepository.GetByIdAsync(gameId);
+            if (gameEntity == null)
+            {
+                throw new GameIdNotFoundException(gameId);
+            }
+            return _mapper.Map<BaseGameModel>(gameEntity);
+        }
+
+        public async Task<IList<BaseGameModel>> GetGamesByPlatformIdAsync (Guid platformId)
+        {
+            var gameIds = await _unitOfWork.GamePlatformRepository.GetGameIdsByPlatformIdAsync(platformId);
+            var result = new List<BaseGameModel>();
+
+            foreach (var gameId in gameIds)
+            {
+                var gameModel = await GetGameByIdAsync(gameId);
+                if (gameModel != null)
+                {
+                    result.Add(gameModel);
+                }
+            }
+            return result;
         }
     }
 }
