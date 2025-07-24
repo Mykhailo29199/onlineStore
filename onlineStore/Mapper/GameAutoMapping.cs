@@ -44,11 +44,19 @@ namespace Store.WebAPI.Mapper
                     .ReverseMap();
 
             // 🎯 Мапінг між обгортками
-            CreateMap<GameCreateRequestDTO, GameModel>()
+            CreateMap<GameCreateDTO, GameModel>()
                     .ReverseMap();
 
-            CreateMap<GameGetDTO, BaseGameModel>()
+            CreateMap<BaseGameWithIdDTO, BaseGameModel>()
                    .ReverseMap();
+
+            CreateMap<BaseGameRequiredDTO, BaseGameModel>()
+                  .ReverseMap();
+
+            CreateMap<GamePutRequiredDTO, GameModel>()
+                   .ReverseMap();
+
+
         }
 
     }

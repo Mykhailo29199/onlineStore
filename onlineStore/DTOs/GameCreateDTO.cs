@@ -1,6 +1,6 @@
 ﻿namespace Store.WebAPI.DTOs
 {
-    public class GameCreateRequestDTO
+    public class GameCreateDTO
     {
         // Вкладений об'єкт з інформацією про гру
         public BaseGameDTO Game { get; set; } = null!;
@@ -11,6 +11,5 @@
         // Список платформ (ID-шники), на яких буде доступна гра
         public List<Guid> Platforms { get; set; } = new();
     }
-
 }
 

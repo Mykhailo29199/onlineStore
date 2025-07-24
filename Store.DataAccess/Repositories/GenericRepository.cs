@@ -49,9 +49,8 @@ namespace Store.DataAccess.Repositories
 
         public async Task <bool> CheckIfExistAsync(Guid id)
         {
-            return await GetByIdAsync(id) == null;
+            return await GetByIdAsync(id) != null;
         }
 
-        
     }
 }

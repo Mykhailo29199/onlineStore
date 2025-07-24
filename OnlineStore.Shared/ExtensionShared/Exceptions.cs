@@ -47,4 +47,12 @@
         {
         }
     }
+
+    public class GameNotExistException : Exception
+    {
+        public GameNotExistException()
+            : base("Game not exist")
+        {
+        }
+    }
 }

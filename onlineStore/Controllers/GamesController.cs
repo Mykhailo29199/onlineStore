@@ -8,6 +8,7 @@ using Store.Services.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Store.Services.Services;
 
 namespace onlineStore.Controllers
 {
@@ -24,8 +25,8 @@ namespace onlineStore.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("games")]
-        public async Task<IActionResult> CreateGame([FromBody] GameCreateRequestDTO requestPostDTO)
+        [HttpPost]
+        public async Task<IActionResult> CreateGame([FromBody] GameCreateDTO requestPostDTO)
         {
             if (requestPostDTO == null || requestPostDTO.Game == null)
             {
@@ -38,7 +39,7 @@ namespace onlineStore.Controllers
             return NoContent();
         }
 
-        [HttpGet("games/{key}")]
+        [HttpGet("{key}")]
         public async Task<IActionResult> GetGameByKey([FromRoute] string key)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -48,11 +49,11 @@ namespace onlineStore.Controllers
 
 
             var gameModel = await _gameService.GetGameByKeyAsync(key);
-            var responseDTO = _mapper.Map<GameGetDTO>(gameModel);
+            var responseDTO = _mapper.Map<BaseGameWithIdDTO>(gameModel);
             return Ok(responseDTO);
         }
 
-        [HttpGet("games/find/{id}")]
+        [HttpGet("find/{id}")]
         public async Task<IActionResult> GetGameById([FromRoute] Guid id)
         {
             if (id == Guid.Empty)
@@ -61,7 +62,7 @@ namespace onlineStore.Controllers
             }
 
             var gameModel = await _gameService.GetGameByIdAsync(id);
-            var responseDTO = _mapper.Map<GameGetDTO>(gameModel);
+            var responseDTO = _mapper.Map<BaseGameWithIdDTO>(gameModel);
             return Ok(responseDTO);
         }
 
@@ -73,8 +74,49 @@ namespace onlineStore.Controllers
                 return BadRequest("Platform Id must be provided.");
             }
             var gameModel = await _gameService.GetGamesByPlatformIdAsync(platformId);
-            var responseDTO = _mapper.Map<IList<GameGetDTO>>(gameModel);
+            var responseDTO = _mapper.Map<IList<BaseGameWithIdDTO>>(gameModel);
             return Ok(responseDTO);
         }
+
+        [HttpGet("genres/{ganreId}/games")]
+        public async Task<IActionResult> GetGameByGanreId([FromRoute] Guid ganreId)
+        {
+            if (ganreId == Guid.Empty)
+            {
+                return BadRequest("Ganre Id must be provided.");
+            }
+            var gameModel = await _gameService.GetGamesByGenreIdAsync(ganreId);
+            var responseDTO = _mapper.Map<IList<BaseGameWithIdDTO>>(gameModel);
+            return Ok(responseDTO);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateGame([FromBody] GamePutRequiredDTO requestPutDTO)
+        {
+            if (requestPutDTO == null || requestPutDTO.Game == null)
+            {
+                return BadRequest("Invalid request body.");
+            }
+            var gameModel = _mapper.Map<GameModel>(requestPutDTO);
+            await _gameService.UpdateGameAsync(gameModel);
+
+            return NoContent();
+        }
+
+
+        [HttpDelete("{gameKey}")]
+        public async Task<IActionResult> DeleteGame([FromRoute] string gameKey)
+        {
+            if (string.IsNullOrWhiteSpace(gameKey))
+            {
+                return BadRequest("Game key must be provided.");
+            }
+
+
+            await _gameService.DeleteGameAsync(gameKey);
+
+            return NoContent(); // 204 — успішно, але без тіла відповіді
+        }
     }
+
 }
